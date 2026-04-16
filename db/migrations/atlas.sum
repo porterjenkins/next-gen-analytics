@@ -1,2 +1,4 @@
-h1:gduY0CRTr0tw5ez1Lv+VSaSBTAZnvnJt6C8UyY+3wEc=
+h1:LvxLLN7s7N4QBKe7EvUtdIOxmNDMp3EZg2z5hOuc73g=
 20260416181756_initial_schema.sql h1:9PsUum3enfNbQKZUA/ZRT+hM7DkX+3l0S3jP0u1vfQ8=
+20260416210356_add_city_column.sql h1:OrwCzQxk7Qzi1QI0bMKVTPm9r6wJ625dQukQfQulDkU=
+20260416212715_add_iot_table.sql h1:Jwsj0cGuF/vgSGvv8MG9Guucfl+/P1uetDDnaLyqM58=

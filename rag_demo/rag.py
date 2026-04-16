@@ -38,8 +38,8 @@ llm = ChatGoogleGenerativeAI(
 chain = prompt | llm | StrOutputParser()
 
 
-def ask(question: str, top_k: int = 5) -> dict:
-    results = retrieve(question, top_k=top_k)
+def ask(question: str, top_k: int = 5, city: str | None = None) -> dict:
+    results = retrieve(question, top_k=top_k, city=city)
 
     context = "\n\n".join(
         f"[Note {r['id']}] ({r['datetime']}): {r['text']}" for r in results

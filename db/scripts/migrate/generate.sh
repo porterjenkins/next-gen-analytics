@@ -36,9 +36,9 @@ docker run --rm -d \
   -p "${DEV_PORT}:5432" \
   pgvector/pgvector:pg16 > /dev/null
 
-# Wait for Postgres to be ready
-until docker exec "$DEV_CONTAINER" pg_isready -U dev -q 2>/dev/null; do
-  sleep 0.5
+# Wait for Postgres to accept connections
+until docker exec "$DEV_CONTAINER" psql -U dev -d dev -c "SELECT 1" > /dev/null 2>&1; do
+  sleep 1
 done
 
 # Enable vector extension on dev DB

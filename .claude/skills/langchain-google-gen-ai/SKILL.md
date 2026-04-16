@@ -91,22 +91,24 @@ Key LCEL operators: `|` pipes runnables. Use `RunnablePassthrough` to forward in
 Read `references/agents.md` for full patterns. Quick reference:
 
 ```python
-from langchain_core.tools import tool
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 
-@tool
 def get_word_length(word: str) -> int:
     """Returns the number of characters in a word."""
     return len(word)
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-agent = create_react_agent(llm, tools=[get_word_length])
+agent = create_agent(
+    model="google_genai:gemini-2.5-flash",
+    tools=[get_word_length],
+    system_prompt="You are a helpful assistant.",
+)
 result = agent.invoke({"messages": [{"role": "user", "content": "How long is 'supercalifragilistic'?"}]})
 ```
 
-Use `langgraph.prebuilt.create_react_agent` — it is the current idiomatic approach.
-The older `initialize_agent` / `AgentExecutor` API still works but is legacy.
+Use `langchain.agents.create_agent` (available since LangChain v1.0) — the current
+idiomatic approach. It accepts plain callables as tools (no `@tool` decorator required,
+though you can still use it). The older `initialize_agent` / `AgentExecutor` and
+`langgraph.prebuilt.create_react_agent` APIs are now legacy.
 
 ---
 
@@ -173,8 +175,8 @@ llm = ChatGoogleGenerativeAI(
 2. **Use `python-dotenv`** for env var loading when the user seems to want production code.
 3. **Add type hints and docstrings** to any custom tool or class.
 4. **Default model**: use `gemini-2.5-flash` unless the user specifies otherwise.
-5. **Never use deprecated APIs**: avoid `LLMChain`, `initialize_agent`, `AgentExecutor`
-   from old langchain — prefer LCEL and LangGraph prebuilt.
+5. **Never use deprecated APIs**: avoid `LLMChain`, `initialize_agent`, `AgentExecutor`,
+   and `langgraph.prebuilt.create_react_agent` — prefer LCEL and `langchain.agents.create_agent`.
 
 ---
 

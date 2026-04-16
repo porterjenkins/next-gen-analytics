@@ -38,10 +38,10 @@ def ingest():
             for (_, row), emb in zip(batch_df.iterrows(), embeddings):
                 cur.execute(
                     """
-                    INSERT INTO notes (datetime, text, embedding)
-                    VALUES (%s, %s, %s::vector)
+                    INSERT INTO notes (datetime, text, city, embedding)
+                    VALUES (%s, %s, %s, %s::vector)
                     """,
-                    (row["datetime"], row["document_text"], emb),
+                    (row["datetime"], row["document_text"], row["city"], emb),
                 )
         conn.commit()
 

@@ -143,3 +143,66 @@ This embeds all 260 documents using `all-MiniLM-L6-v2` (runs locally, no API key
 uv run streamlit run rag_demo/app.py
 ```
 
+### 3. TODO:
+- Fill in the postgres query found in `rag_demo.retriever.retriever`
+    - `VECTOR_SEARCH_QUERY` and `VECTOR_SEARCH_QUERY_WITH_CITY`
+- Change the distance metric:
+  - Try cosine similiarity
+  - L2 distance
+- Change the system prompt, `SYSTEM_PROMPT`, in `rag.py`
+- How does the number of documents affect the results?
+
+# DEMO #2: Agent Demo (IoT events)
+
+### 1. Apply the `iot` table migration
+
+The `iot` table is declared in `db/schema.pg.hcl` and backed by the generated migration in `db/migrations/`. Apply pending migrations:
+
+```bash
+./db/scripts/migrate/apply.sh
+```
+
+### 2. Ingest the Excel history
+
+Loads `data/History_11127185.xlsx` into the `iot` table:
+
+```bash
+uv run python -m agent_demo.ingest
+```
+
+The script is idempotent — if the table already has rows it skips re-inserting. To re-run from a clean state:
+
+```bash
+docker exec -it rag-postgres psql -U rag_user -d rag_demo -c "TRUNCATE iot RESTART IDENTITY;"
+```
+
+Verify:
+
+```bash
+docker exec -it rag-postgres psql -U rag_user -d rag_demo -c "SELECT COUNT(*) FROM iot;"
+```
+
+### 3. Launch the agent Streamlit app
+
+```bash
+uv run streamlit run agent_demo/app.py
+```
+
+The agent uses Gemini (`gemini-2.5-flash`) with three tools that query the `iot` table:
+
+- `get_counts_by_value` — counts grouped by `device_name`, `device_mapping`, or `event`.
+- `get_time_series_by_value` — daily counts over time, optionally filtered to a specific value.
+- `get_lagged_events` — for rows matching a filter, shows the prior event via a SQL `LAG` window function.
+
+Each tool returns a markdown table that is fed back to the LLM and also surfaced in a "Tool calls" expander in the UI.
+
+
+### 4. Add 2-3 new tools to analyze this data! 
+- Some ideas:
+    - Events per day
+ 
+
+
+### 5. Deployment
+
+To deploy your app to Databricks, check out this tutorial: https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph
