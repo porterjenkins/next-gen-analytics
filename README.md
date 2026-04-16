@@ -200,6 +200,8 @@ Each tool returns a markdown table that is fed back to the LLM and also surfaced
 ### 4. Add 2-3 new tools to analyze this data! 
 - Some ideas:
     - Events per day
+    - Average value by event?
+    - Anomolies? 
  
 
 
