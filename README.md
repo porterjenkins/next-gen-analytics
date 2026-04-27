@@ -40,10 +40,10 @@ docker compose down -v
 
 ### 3. Configure environment
 
-Copy `.env` and set your Google API key:
+Create a .env file to a manage environment variables
 
 ```bash
-cp .env.example .env
+touch .env
 # edit .env and set GOOGLE_API_KEY
 ```
 
