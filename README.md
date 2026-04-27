@@ -144,8 +144,9 @@ uv run streamlit run rag_demo/app.py
 ```
 
 ### 3. TODO:
+
 - Fill in the postgres query found in `rag_demo.retriever.retriever`
-    - `VECTOR_SEARCH_QUERY` and `VECTOR_SEARCH_QUERY_WITH_CITY`
+  - `VECTOR_SEARCH_QUERY` and `VECTOR_SEARCH_QUERY_WITH_CITY`
 - Change the distance metric:
   - Try cosine similiarity
   - L2 distance
@@ -196,15 +197,13 @@ The agent uses Gemini (`gemini-2.5-flash`) with three tools that query the `iot`
 
 Each tool returns a markdown table that is fed back to the LLM and also surfaced in a "Tool calls" expander in the UI.
 
+### 4. Add 2-3 new tools to analyze this data!
 
-### 4. Add 2-3 new tools to analyze this data! 
 - Some ideas:
-    - Events per day
-    - Average value by event?
-    - Anomolies? 
- 
-
+  - Events per day
+  - Average value by event?
+  - Anomalies?
 
 ### 5. Deployment
 
-To deploy your app to Databricks, check out this tutorial: https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph
+To deploy your app to Databricks, check out this tutorial: [https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph](https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph)

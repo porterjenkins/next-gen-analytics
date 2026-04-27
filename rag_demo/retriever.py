@@ -6,21 +6,14 @@ from rag_demo.db import get_connection
 from rag_demo.embeddings import embed_query
 
 
+# TODO: write your query here
 VECTOR_SEARCH_QUERY = """
-    SELECT id, datetime, text,
-           embedding <=> %s::vector AS distance
-    FROM notes
-    ORDER BY distance
-    LIMIT %s
+
 """
 
+# TODO: write your query here
 VECTOR_SEARCH_QUERY_WITH_CITY = """
-    SELECT id, datetime, text,
-           embedding <=> %s::vector AS distance
-    FROM notes
-    WHERE city = %s
-    ORDER BY distance
-    LIMIT %s
+
 """
 
 
