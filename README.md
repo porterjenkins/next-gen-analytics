@@ -29,8 +29,6 @@ Now build the environment:
 uv sync
 ```
 
-
-
 ### 2. Start the database
 
 Make sure Docker Desktop is running, then:
@@ -180,6 +178,10 @@ Each tool returns a markdown table that is fed back to the LLM and also surfaced
   - Average value by event?
   - Anomalies?
 
-### 5. Deployment
+### 5. Bonus: Multi-agent architecture
+
+- Can you add multiple sub-agents that each solve specialized tasks?
+
+### 6. Deployment
 
 To deploy your app to Databricks, check out this tutorial: [https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph](https://docs.databricks.com/aws/en/generative-ai/agent-framework/author-agent?language=LangGraph)
