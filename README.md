@@ -4,11 +4,32 @@ Workshop on modern analytics in the AI era
 
 ## Setup
 
+### 0. Change your active directory to `next-gen-analytics`
+
+```
+cd next-gen-analytics
+```
+
 ### 1. Install dependencies
+
+Make sure uv is installed
+
+Mac:
+
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh                     
+```
+
+Windows  
+`powershell -ExecutionPolicy ByPass -c  "irm https://astral.sh/uv/install.ps1 | iex"` 
+
+Now build the environment:
 
 ```bash
 uv sync
 ```
+
+
 
 ### 2. Start the database
 
@@ -44,7 +65,13 @@ Create a .env file to a manage environment variables
 
 ```bash
 touch .env
-# edit .env and set GOOGLE_API_KEY
+```
+
+Now let's add our environment variables:
+
+```
+DATABASE_URL=postgresql://rag_user:rag_pass@localhost:5432/rag_demo
+GOOGLE_API_KEY=your-api-key-here
 ```
 
 Set `PYTHONPATH` to the project root so module imports resolve correctly:
@@ -69,7 +96,7 @@ curl -sSf https://atlasgo.sh | sh
 docker exec rag-postgres psql -U rag_user -d rag_demo -c "CREATE EXTENSION IF NOT EXISTS vector;"
 ```
 
-### 6. Run initial migration
+### 6. Run initial migration and insert data
 
 Generate and apply the initial schema:
 
@@ -78,72 +105,49 @@ Generate and apply the initial schema:
 ./db/scripts/migrate/apply.sh
 ```
 
+RAG demo data (data/field_notes.csv → notes table). This embeds all 260 documents using `all-MiniLM-L6-v2` (runs locally, no API key needed) and stores them in the `notes` table with pgvector.
+
+```bash
+uv run python -m rag_demo.ingest
+```
+
+ Agent demo data (data/History_11127185.xlsx → iot table)
+
+```bash
+uv run python -m agent_demo.ingest
+```
+
+Verify that both insertion jobs worked
+
 To open an interactive psql session:
 
 ```bash
 docker exec -it rag-postgres psql -U rag_user -d rag_demo
 ```
 
-Check out the `notes` table:
+Verify out the `notes` table:
 
 ```
 SELECT * FROM notes LIMIT 2;
 ```
 
-## Database Management
+Verify the iot table:
 
-The project uses [Atlas](https://atlasgo.sh) for database schema management. The `db/` directory contains all database-related files and scripts.
+```
+SELECT * FROM iot LIMIT 2;
+```
 
-### Schema Declaration
-
-- `**db/schema.pg.hcl**`: HCL-formatted schema declaration file that defines the desired database structure
-- Edit this file to make schema changes (add tables, columns, constraints, etc.)
-
-### Migration Scripts
-
-1. **Generate Migration**:
-  ```bash
-   ./db/scripts/migrate/generate.sh --name <migration_name>
-  ```
-   Creates a new migration file based on changes to `schema.pg.hcl`. Migration names should be `camel_case`.
-  > Note: This command spins up a temporary Docker container as a "dev" database to compute the diff. It does not touch the app database.
-2. **Apply Migrations**:
-  ```bash
-   ./db/scripts/migrate/apply.sh
-  ```
-   Applies all pending migrations to the database.
-3. **Inspect Schema**:
-  ```bash
-   ./db/scripts/schema/inspect.sh
-  ```
-   Opens a link to view the database schema graphically in Atlas.
-
-### Workflow
-
-1. Edit `db/schema.pg.hcl` to make desired schema changes
-2. Generate a migration: `./db/scripts/migrate/generate.sh --name <descriptive_name>`
-3. Review the generated migration file in `db/migrations/`
-4. Apply the migration: `./db/scripts/migrate/apply.sh`
+At this point you're ready to run the demo!
 
 # DEMO #1: Retrieval Augmented Generation
 
-### 1. Ingest data
-
-Load the field notes CSV into the database and compute embeddings:
-
-```bash
-uv run python -m rag_demo.ingest
-```
-
-This embeds all 260 documents using `all-MiniLM-L6-v2` (runs locally, no API key needed) and stores them in the `notes` table with pgvector.
-
-### 2. Launch the Streamlit app
+### Launch the Streamlit app
 
 ```bash
 uv run streamlit run rag_demo/app.py
 ```
 
-### 3. TODO:
+### TODO:
 
 - Fill in the postgres query found in `rag_demo.retriever.retriever`
   - `VECTOR_SEARCH_QUERY` and `VECTOR_SEARCH_QUERY_WITH_CITY`
@@ -155,35 +159,7 @@ uv run streamlit run rag_demo/app.py
 
 # DEMO #2: Agent Demo (IoT events)
 
-### 1. Apply the `iot` table migration
-
-The `iot` table is declared in `db/schema.pg.hcl` and backed by the generated migration in `db/migrations/`. Apply pending migrations:
-
-```bash
-./db/scripts/migrate/apply.sh
-```
-
-### 2. Ingest the Excel history
-
-Loads `data/History_11127185.xlsx` into the `iot` table:
-
-```bash
-uv run python -m agent_demo.ingest
-```
-
-The script is idempotent — if the table already has rows it skips re-inserting. To re-run from a clean state:
-
-```bash
-docker exec -it rag-postgres psql -U rag_user -d rag_demo -c "TRUNCATE iot RESTART IDENTITY;"
-```
-
-Verify:
-
-```bash
-docker exec -it rag-postgres psql -U rag_user -d rag_demo -c "SELECT COUNT(*) FROM iot;"
-```
-
-### 3. Launch the agent Streamlit app
+### Launch the agent Streamlit app
 
 ```bash
 uv run streamlit run agent_demo/app.py
