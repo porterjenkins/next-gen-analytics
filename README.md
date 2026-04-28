@@ -181,6 +181,7 @@ Each tool returns a markdown table that is fed back to the LLM and also surfaced
 ### 5. Bonus: Multi-agent architecture
 
 - Can you add multiple sub-agents that each solve specialized tasks?
+  - Docs: [https://docs.langchain.com/oss/python/langchain/multi-agent/subagents](https://docs.langchain.com/oss/python/langchain/multi-agent/subagents)
 
 ### 6. Deployment
 
